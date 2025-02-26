@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EC Eligibility Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --text: #e2e8f0;
+            --text-muted: rgba(226, 232, 240, 0.7);
+            --glass-bg: rgba(15, 23, 42, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            min-height: 100vh;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(15, 23, 42, 0) 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            transition: transform 0.2s ease-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .main-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://janicez557.sg-host.com/wp-content/uploads/2024/12/shutterstock_764105278-scaled-1-1.png');
+            background-size: cover;
+            background-position: center;
+            filter: contrast(1.1) brightness(0.85);
+            z-index: -2;
+            transition: filter 1.5s ease;
+        }
+        
+        .main-container:hover .background-image {
+            filter: contrast(1.15) brightness(0.9);
+        }
+        
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(15, 23, 42, 0.9) 0%, 
+                rgba(15, 23, 42, 0.75) 40%, 
+                rgba(15, 23, 42, 0.4) 100%);
+            z-index: -1;
+        }
+
+        .content-layout {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4%;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .left-content {
+            width: 55%;
+            padding-right: 2%;
+        }
+
+        .right-content {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-content {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpIn 0.8s forwards ease-out;
+        }
+
+        @keyframes fadeUpIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff 0%, var(--text) 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            position: relative;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 120px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 3px;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: scaleIn 1.2s 0.4s forwards cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+        
+        @keyframes scaleIn {
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .intro-text {
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            animation-delay: 0.2s;
+        }
+
+        .grant-highlight {
+            position: relative;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 0 5px;
+        }
+        
+        .grant-highlight::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0.2;
+            z-index: -1;
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpIn 0.8s 0.3s forwards ease-out;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-item:hover .feature-icon {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+        
+        .feature-item:hover .feature-text {
+            color: var(--text);
+        }
+
+        .note-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 16px;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpIn 0.8s 0.5s forwards ease-out;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .note-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 2px 0 0 2px;
+        }
+        
+        .note-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .note-icon {
+            color: var(--primary);
+            margin-right: 15px;
+            margin-top: 3px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .note-box:hover .note-icon {
+            transform: scale(1.2);
+        }
+
+        .note-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .important-highlight {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .action-area {
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUpIn 0.8s 0.7s forwards ease-out;
+            position: relative;
+        }
+
+        .cta-button {
+            background: linear-gradient(90deg, #4f46e5 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.1rem 2.2rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            margin-bottom: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+            z-index: 2;
+            letter-spacing: 0.5px;
+            max-width: fit-content;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(79, 70, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .btn-text {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .arrow-icon {
+            position: relative;
+            z-index: 2;
+            animation: bounceRight 1.5s infinite;
+        }
+        
+        @keyframes bounceRight {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(4px);
+            }
+        }
+
+        .bonus-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .year-highlight {
+            color: var(--primary);
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .year-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--primary);
+            transition: all 0.3s ease;
+            transform-origin: left;
+        }
+        
+        .year-highlight:hover::after {
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .notification-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            opacity: 0;
+            transform: translateX(50px);
+            animation: slideIn 0.6s 1.5s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .notification-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ef4444 0%, #e11d48 100%);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-banner:hover .notification-icon {
+            transform: rotate(10deg);
+        }
+        
+        .notification-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .notification-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+        
+        .notification-action {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .content-layout {
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            
+            .left-content, .right-content {
+                width: 100%;
+                padding-right: 0;
+            }
+            
+            .right-content {
+                margin-top: 1rem;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .intro-text {
+                font-size: 0.95rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-layout {
+                padding: 1.5rem;
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            body {
+                overflow-y: auto;
+            }
+            
+            .cta-button {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .intro-text, .bonus-text {
+                font-size: 0.9rem;
+            }
+            
+            .notification-banner {
+                max-width: 280px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-follower"></div>
+    
+    <div class="main-container">
+        <div class="background-image"></div>
+        <div class="background-overlay"></div>
+        
+        <div class="content-layout">
+            <div class="left-content">
+                <div class="header-content">
+                    <h1>EC Eligibility Assessment</h1>
+                    <p class="intro-text">
+                        Ready to explore your options for purchasing an EC? You're just a few questions away from discovering whether you qualify and if you're eligible for a <span class="grant-highlight">$30,000 grant</span> to offset your purchase cost.
+                    </p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                        </div>
+                        <p class="feature-text">Verify eligibility for up to $30,000 in grants</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <p class="feature-text">Access to exclusive EC properties</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </div>
+                        <p class="feature-text">Download comprehensive EC listings</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <p class="feature-text">Priority access to new launches</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-content">
+                <div class="note-box">
+                    <div class="note-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="note-text">
+                        <span class="important-highlight">Important Note:</span>
+                        This assessment is a mandatory step required by all developers to determine your eligibility, but rest assured, you are not obligated to make a purchase. Your responses will help us tailor the best options for your needs.
+                    </div>
+                </div>
+                
+                <div class="action-area">
+                    <a href="registration.html">
+                        <button class="cta-button" id="ctaButton">
+                            <span class="btn-text">Start Your Assessment</span>
+                            <span class="arrow-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                    </a>
+                    
+                    <p class="bonus-text">
+                        Complete the questionnaire now for immediate results and exclusive access to the latest <span class="year-highlight">2025 new launch units</span> from our partnering developers.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notification Banner -->
+        <div class="notification-banner">
+            <div class="notification-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <div class="notification-content">
+                <span class="notification-name" id="notificationName">Emily Tan Wei Ling</span>
+                <span class="notification-action" id="notificationAction">just submitted recently</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cursor follower effect
+        function initCursorFollower() {
+            const follower = document.querySelector('.cursor-follower');
+            let mouseX = 0, mouseY = 0;
+            let followerX = 0, followerY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                follower.style.opacity = '1';
+            });
+            
+            function animate() {
+                // Smooth following with easing
+                followerX += (mouseX - followerX) * 0.1;
+                followerY += (mouseY - followerY) * 0.1;
+                
+                if (follower) {
+                    follower.style.left = `${followerX}px`;
+                    follower.style.top = `${followerY}px`;
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            // Hide follower when mouse leaves window
+            document.addEventListener('mouseleave', () => {
+                follower.style.opacity = '0';
+            });
+            
+            document.addEventListener('mouseenter', () => {
+                follower.style.opacity = '1';
+            });
+        }
+        
+        // Button click effect
+        // function initButtonEffects() {
+        //     const button = document.getElementById('ctaButton');
+            
+        //     button.addEventListener('click', function() {
+        //         alert('Starting your EC eligibility assessment...');
+        //     });
+        // }
+        
+        // Notification system
+        function initNotifications() {
+            const notifications = [
+                { name: "Siti Nur Aisyah Binti Ahmad", action: "just submitted recently" },
+                { name: "David Tan", action: "qualified for a $30,000 grant" },
+                { name: "Sarah Lim", action: "downloaded the EC list" },
+                { name: "Michael Chen", action: "completed the assessment" },
+                { name: "Joanne Ng", action: "requested a callback" },
+                { name: "Brandon Ng Jia Hao", action: "just submitted recently" },
+                { name: "Muhammad Faris Bin Zulkifli", action: "just submitted recently" },
+                { name: "Emily Tan Wei Ling", action: "just submitted recently" }
+            ];
+
+            let currentIndex = 0;
+            const notificationBanner = document.querySelector('.notification-banner');
+            const nameElement = document.getElementById('notificationName');
+            const actionElement = document.getElementById('notificationAction');
+
+            function updateNotification() {
+                const { name, action } = notifications[currentIndex];
+                
+                // Hide
+                notificationBanner.style.opacity = '0';
+                notificationBanner.style.transform = 'translateX(20px)';
+                
+                setTimeout(() => {
+                    nameElement.textContent = name;
+                    actionElement.textContent = action;
+                    
+                    // Show
+                    notificationBanner.style.opacity = '1';
+                    notificationBanner.style.transform = 'translateX(0)';
+                }, 500);
+
+                currentIndex = (currentIndex + 1) % notifications.length;
+            }
+
+            // Change notification every 5 seconds
+            setInterval(updateNotification, 5000);
+        }
+        
+        // Initialize effects on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initCursorFollower();
+            // initButtonEffects();
+            initNotifications();
+        });
+    </script>
+</body>
+</html>
