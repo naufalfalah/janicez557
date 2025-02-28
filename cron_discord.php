@@ -21,11 +21,11 @@ try {
     if ($user) {
         $userId = $user['id'];
 
-        if (sendLeadToDiscord($userId)) {
+        if (sendLeadToDiscord($user)) {
             $updateStmt = $pdo->prepare("UPDATE users SET discord_sent = 1 WHERE id = :id");
             $updateStmt->execute(['id' => $userId]);
 
-            echo "User dengan ID $userId telah diperbarui.\n";
+            echo "Lead $userId has been sent.\n";
         }
     }
 } catch (PDOException $e) {
