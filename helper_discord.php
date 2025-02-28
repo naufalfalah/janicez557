@@ -1,6 +1,6 @@
 <?php
 
-function sendLeadToDiscord($userId)
+function sendLeadToDiscord($user)
 {
     // echo json_encode($_POST); 
 
@@ -10,15 +10,16 @@ function sendLeadToDiscord($userId)
     $commonData = array();
     $additional_data = array();
 
-    if (isset($_POST)) {
+    // Modification for janicez557 cron
+    if (isset($user)) {
         $commonData = array(
-            "name" => $_POST['firstname'],
-            "mobile_number" => $_POST['ph_number'],
-            "email" => $_POST['email'],
+            "name" => $user['name'],
+            "mobile_number" => $user['phone'],
+            "email" => $user['email'],
             "source_url" => 'https://findmypropertyvalaution.homes/',
         );
 
-        if ($_POST['form_type'] == 'condo') {
+        if (isset($_POST['form_type']) && $_POST['form_type'] == 'condo') {
 
             $data = 'New Lead Please take note! New Lead Please take note! 
     Jome Official, you have a new lead:
@@ -50,7 +51,7 @@ function sendLeadToDiscord($userId)
                     "value" => $_POST['floorNumber'] ." - ". $_POST['unitNumber']
                 )
             );
-        } elseif ($_POST['form_type'] == 'landed') {
+        } elseif (isset($_POST['form_type']) && $_POST['form_type'] == 'landed') {
 
             $data = 'New Lead Please take note! New Lead Please take note! 
     Jome Official, you have a new lead:
@@ -86,7 +87,7 @@ function sendLeadToDiscord($userId)
                     "value" => $_POST['your_plans']
                 )
             );
-        } elseif ($_POST['form_type'] == 'hdb') {
+        } elseif (isset($_POST['form_type']) && $_POST['form_type'] == 'hdb') {
 
             $data = 'New Lead Please take note! New Lead Please take note! 
     Jome Official, you have a new lead:
@@ -262,35 +263,21 @@ function sendLeadToDiscord($userId)
         curl_setopt_array($curl, array(
 
             CURLOPT_URL => 'https://discord.com/api/webhooks/1337719676704133140/xYQPjnOeeEwNb1V6xmf6Gz3Y9m-AIfq-8Iqet61Y_FvQPukqOwGB1vbFJXxk9X7pnrg_',
-
             CURLOPT_RETURNTRANSFER => true,
-
             CURLOPT_ENCODING => '',
-
             CURLOPT_MAXREDIRS => 10,
-
             CURLOPT_TIMEOUT => 0,
-
             CURLOPT_FOLLOWLOCATION => true,
-
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-
             CURLOPT_CUSTOMREQUEST => 'POST',
-
             CURLOPT_POSTFIELDS => json_encode($post_array),
-
             CURLOPT_HTTPHEADER => array(
-
                 'Content-Type: application/json',
-
                 'Cookie: __dcfduid=8ec71370974011ed9aeb96cee56fe4d4; __sdcfduid=8ec71370974011ed9aeb96cee56fe4d49deabe12bc0fc3d686d23eaa0b49af957ffe68eadec722cff5170d5c750b00ea'
-
             ),
-
         ));
 
         $response = curl_exec($curl);
-
         curl_close($curl);
 
         echo $response;
