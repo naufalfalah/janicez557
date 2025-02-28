@@ -51,9 +51,9 @@ try {
     $stmt->execute([$lead_id, $phone, $otp]);
     
     $message = "Your OTP code is: $otp";
-    // $sendResult = sendWpMessage($phone, $message, $api_key);
+    $sendResult = sendWpMessage($phone, $message);
     
-    echo json_encode(['success' => true, 'message' => 'OTP generated successfully']);
+    echo json_encode(['success' => true, 'message' => 'OTP generated successfully', 'data' => $sendResult]);
     exit();
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);

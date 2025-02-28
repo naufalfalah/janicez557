@@ -16,8 +16,8 @@ function sendWpMessage($client_number, $message)
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
         CURLOPT_POSTFIELDS => json_encode(array(
-            "to_number" => "+895391799805",
-            "from_number" => "$from_number",
+            "to_number" => '+65'.$client_number,
+            "from_number" => $from_number,
             "text" => $message
         )),
         CURLOPT_HTTPHEADER => array(
