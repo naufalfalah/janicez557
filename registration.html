@@ -246,7 +246,7 @@
             margin-top: auto;
         }
 
-        .prev-btn, .next-btn, .send-btn {
+        .prev-btn, .next-btn, .send-btn, .submit-btn, .resend-btn {
             background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
             color: var(--text);
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -453,6 +453,68 @@
                 font-size: 1rem;
             }
         }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            background: #1a1a2e;
+            color: #ffffff;
+            transition: 0.3s ease-in-out;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(93, 93, 255, 0.7);
+            border: 1px solid #5d5dff;
+        }
+
+        /* Input OTP styling */
+        #input_otp {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 5px;
+            border-radius: 8px;
+            border: none;
+            background: #1a1a2e;
+            color: #ffffff;
+            transition: 0.3s ease-in-out;
+        }
+
+        #input_otp:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(93, 93, 255, 0.7);
+        border: 1px solid #5d5dff;
+        }
+
+        /* Placeholder */
+        #input_otp::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+            letter-spacing: normal;
+        }
     </style>
 </head>
 <body>
@@ -464,7 +526,7 @@
         
         <div class="container">
             <div class="form-section">
-                <form action="submit.php" id="myForm" method="POST">
+                <form action="redirect.php" id="registrationForm" method="POST" onsubmit="return verifyOtp(event)">
                     <!-- Step 1: Household Scheme -->
                     <div class="step active" id="step1">
                         <h1>Household Scheme</h1>
@@ -500,7 +562,7 @@
                         <div class="options">
                             <label class="option" onclick="selectOption(this, 'step2')"><input type="radio" name="citizenship" value="At least one Singapore Citizen and one PR">Yes, at least one Singapore Citizen and one Permanent Resident</label>
                             <label class="option" onclick="selectOption(this, 'step2')"><input type="radio" name="citizenship" value="All others are PR or Citizen">Yes, at least one Singapore Citizen and all others are either Permanent Residents or Citizens</label>
-                            <label class="option" onclick="selectOption(this, 'step2')"><input type="radio" name="citizenship" value="No, not Singapore Citizens or Permanent Residents">No, no Singapore Citizens or Permanent Residents</label>
+                            <label class="option" onclick="selectOption(this, 'step2')"><input type="radio" name="citizenship" value="No, not Singapore Citizens or Permanent Residents">No, not Singapore Citizens or Permanent Residents</label>
                         </div>
                         
                         <div class="button-group">
@@ -675,8 +737,90 @@
                                 </span>
                                 <span class="btn-text">Previous</span>
                             </button>
-                            <button class="send-btn" type="submit">
+                            <button type="button" class="next-btn" onclick="nextStep()" id="nextBtn7" disabled>
+                                <span class="btn-text">Next</span>
+                                <span class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 8: Personal Details -->
+                    <div class="step" id="step8">
+                        <h1>Personal Details</h1>
+                        <p class="question">Please enter your personal details.</p>
+                        
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="input_name" class="form-control" data-id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="input_phone" class="form-control" data-id="phone" name="phone" placeholder="+65" maxlength="8" oninput="validatePhone()" required>
+                            <small id="phone_error" style="color: red; display: none;">Phone number should start with 9 or 8 and must be 8 digits long.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="input_email" class="form-control" data-id="email" name="email" placeholder="Enter your email (e.g., user@example.com)" oninput="validateEmail()">
+                            <small id="email_error" style="color: red; display: none;">Please enter a valid email address.</small>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="prev-btn" type="button" onclick="prevStep()">
+                                <span class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                                        <polyline points="12 19 5 12 12 5"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="btn-text">Previous</span>
+                            </button>
+                            <button class="send-btn" type="button" onclick="sendOtp()" id="sendBtn" disabled>
                                 <span class="btn-text">Send</span>
+                                <span class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 9: OTP -->
+                    <div class="step" id="step9">
+                        <h1>Verification</h1>
+                        <!-- <p class="question">Please enter your personal details.</p> -->
+                        
+                        <div class="form-group">
+                            <label for="otp">Enter OTP</label>
+                            <input type="text" id="input_otp" class="form-control" name="otp" placeholder="______" maxlength="6" required>
+                            <small id="otp_error" style="color: red; display: none;">Invalid OTP. Please try again.</small>
+                        </div>
+
+                        <p class="otp-info">We've sent a 6-digit code to your registered phone number.</p>
+
+                        <div class="resend-container" style="margin-top: 5px;">
+                            <button type="button" id="resendOtpBtn" class="resend-btn" onclick="resendOtp()" disabled>Resend OTP</button>
+                            <span id="resendTimer">00:30</span>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="prev-btn" type="button" onclick="prevStep()">
+                                <span class="btn-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                                        <polyline points="12 19 5 12 12 5"></polyline>
+                                    </svg>
+                                </span>
+                                <span class="btn-text">Previous</span>
+                            </button>
+                            <button class="submit-btn" type="submit" id="submitBtn" disabled>
+                                <span class="btn-text">Submit</span>
                                 <span class="btn-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -753,7 +897,7 @@
     
         // Current step
         let currentStep = 1;
-        const totalSteps = 7;
+        const totalSteps = 9;
         
         // Function to select an option
         function selectOption(element, stepId) {
@@ -798,7 +942,137 @@
                 updateProgressBar();
             }
         }
+
+        async function sendOtp() {
+            const form = document.getElementById("registrationForm");
+            const formData = new FormData(form);
+
+            // formData.forEach((value, key) => {
+            //     console.log(`${key}: ${value}`);
+            // });
+            const urlEncodedData = new URLSearchParams(formData).toString();
+            try {
+                const response = await fetch('save_lead_and_otp.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: urlEncodedData
+                });
+                console.log('response', response);
+
+                const data = await response.json();
+                if (data.success) {
+                    // alert('Lead saved and OTP sent successfully!');
+                    sessionStorage.setItem('lead_id', data.lead_id);
+                    sessionStorage.setItem('phone', formData.get("phone"));
+                    startResendTimer(); 
+                    nextStep();
+                } else {
+                    alert('Failed to process request: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the request.');
+            }
+        }
         
+        let resendCountdown = 30;
+        let resendInterval;
+
+        function startResendTimer() {
+            const resendBtn = document.getElementById("resendOtpBtn");
+            const resendTimer = document.getElementById("resendTimer");
+
+            resendBtn.disabled = true;
+            resendCountdown = 30;
+            resendTimer.textContent = `00:${resendCountdown}`;
+
+            resendInterval = setInterval(() => {
+                resendCountdown--;
+                resendTimer.textContent = `00:${resendCountdown < 10 ? '0' + resendCountdown : resendCountdown}`;
+
+                if (resendCountdown <= 0) {
+                    clearInterval(resendInterval);
+                    resendBtn.disabled = false;
+                    resendTimer.textContent = "";
+                }
+            }, 1000);
+        }
+
+        async function resendOtp() {
+            const phone = sessionStorage.getItem('phone');
+            if (!phone) {
+                alert("Phone number is missing!");
+                return;
+            }
+
+            try {
+                const response = await fetch('resend_otp.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `phone=${encodeURIComponent(phone)}`
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('OTP has been resent!');
+                    startResendTimer();
+                } else {
+                    alert('Failed to resend OTP: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while resending OTP.');
+            }
+        }
+
+        async function verifyOtp(event) {
+            event.preventDefault();
+
+            const otpInput = document.getElementById("input_otp");
+            const otpError = document.getElementById("otp_error");
+            const otp = otpInput.value.trim();
+            const phone = sessionStorage.getItem('phone');
+
+            if (!otp) {
+                otpError.style.display = "block";
+                otpError.textContent = "OTP cannot be empty!";
+                return;
+            }
+
+            if (!phone) {
+                alert("Phone number is missing. Please restart the process.");
+                return;
+            }
+
+            try {
+                const response = await fetch('verify_otp.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `phone=${encodeURIComponent(phone)}&otp=${encodeURIComponent(otp)}`
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    otpError.style.display = "none";
+                    document.getElementById("registrationForm").submit();
+                } else {
+                    otpError.style.display = "block";
+                    otpError.textContent = data.message || "Invalid OTP. Please try again.";
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while verifying OTP. Please try again.');
+            }
+        }
+
+
         // Function to update user info based on current step
         function updateUserInfo() {
             const userNameElement = document.getElementById('userName');
@@ -841,7 +1115,6 @@
 
         document.querySelectorAll('input[name="household"]').forEach(radio => {
             radio.addEventListener('change', () => {
-                console.log('test')
                 document.getElementById('nextBtn1').disabled = false;
             });
         });
@@ -886,6 +1159,55 @@
             input.addEventListener('input', () => {
                 checkSubmit();
             });
+        });
+        
+		function checkSubmit() {
+			let name = document.getElementById('input_name').value.trim();
+			let phone = document.getElementById('input_phone').value.trim();
+			let email = document.getElementById('input_email').value.trim();
+			document.getElementById('sendBtn').disabled = !(name && phone && email);
+		}
+		
+		function validatePhone() {
+			let phoneInput = document.getElementById("input_phone");
+			let errorMsg = document.getElementById("phone_error");
+			let sendBtn = document.getElementById("sendBtn");
+
+			phoneInput.value = phoneInput.value.replace(/\D/g, '');
+			
+			let phonePattern = /^[89]\d{7}$/; // Starts with 8 or 9 and has 8 digits
+			
+			if (!phonePattern.test(phoneInput.value)) {
+				errorMsg.style.display = "block";
+				sendBtn.disabled = true;
+			} else {
+				errorMsg.style.display = "none";
+				sendBtn.disabled = false;
+			}
+		}
+
+		function validateEmail() {
+			let emailInput = document.getElementById("input_email");
+			let errorMsg = document.getElementById("email_error");
+			let sendBtn = document.getElementById("sendBtn");
+	
+			// Email validation pattern
+			let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+	
+			if (!emailPattern.test(emailInput.value)) {
+				errorMsg.style.display = "block";
+				sendBtn.disabled = true;
+			} else {
+				errorMsg.style.display = "none";
+				sendBtn.disabled = false;
+			}
+		}
+
+        document.getElementById("input_otp").addEventListener("input", function () {
+            const otpInput = this.value.replace(/\D/g, "").substring(0, 6); // Hanya angka & max 6 digit
+            this.value = otpInput;
+
+            document.getElementById("submitBtn").disabled = otpInput.length < 6;
         });
     </script>
 </body>

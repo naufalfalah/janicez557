@@ -21,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Database config
 $dbConfig = [
     'host' => 'localhost',
-    'user' => 'root',
-    'pass' => 'root',
-    'name' => 'dbiqzpqa1fx0dl'
+    'name' => 'dbhnskgiz5vgt0',
+    'user' => 'ueglrxglswpkr',
+    'pass' => '|$jicqbd23h#',
 ];
 
 // MySQL connection
