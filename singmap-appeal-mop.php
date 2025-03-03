@@ -598,7 +598,7 @@
                 floor: "01",
                 district: "D05",
                 price: "$3354000 / $1128.91 psf",
-                image: '',
+                image: './images/empty.webp',
                 npsPrice: null,
                 dpsPrice: null,
                 psf: '$1,129',
