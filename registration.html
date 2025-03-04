@@ -487,6 +487,30 @@
             box-shadow: 0 0 10px rgba(93, 93, 255, 0.7);
             border: 1px solid #5d5dff;
         }
+        .input-container {
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+        .input-container button {
+            padding: 10px;
+            border: none;
+            background-color: #5d5dff;
+            color: white;
+            cursor: pointer;
+        }
+        .input-container button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
 
         /* Input OTP styling */
         #input_otp {
@@ -760,7 +784,10 @@
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="tel" id="input_phone" class="form-control" data-id="phone" name="phone" placeholder="+65" maxlength="8" oninput="validatePhone()" required>
+                            <div class="input-container">
+                                <input type="tel" id="input_phone" class="form-control" data-id="phone" name="phone" placeholder="+65" maxlength="8" oninput="validatePhone()" required>
+                                <button id="getCode" onclick="sendOtp()" disabled>Get Code</button>
+                            </div>
                             <small id="phone_error" style="color: red; display: none;">Phone number should start with 9 or 8 and must be 8 digits long.</small>
                         </div>
                         <div class="form-group">
@@ -768,6 +795,21 @@
                             <input type="email" id="input_email" class="form-control" data-id="email" name="email" placeholder="Enter your email (e.g., user@example.com)" oninput="validateEmail()">
                             <small id="email_error" style="color: red; display: none;">Please enter a valid email address.</small>
                         </div>
+
+                        <div id="otpContainer" style="display: none; margin-top: 15px; margin-bottom: 15px;">
+                            <div class="form-group">
+                                <label for="input_otp">Enter OTP</label>
+                                <input type="text" id="input_otp" class="form-control" name="otp" placeholder="______" maxlength="6" required>
+                                <small id="otp_error" style="color: red; display: none;">Invalid OTP. Please try again.</small>
+                            </div>
+
+                            <p class="otp-info">We've sent a 6-digit code to your registered phone number.</p>
+
+                            <div class="resend-container" style="margin-top: 5px;">
+                                <button type="button" id="resendOtpBtn" class="resend-btn" onclick="resendOtp()" disabled>Resend OTP</button>
+                                <span id="resendTimer">00:30</span>
+                            </div>
+                        </div>
                         
                         <div class="button-group">
                             <button class="prev-btn" type="button" onclick="prevStep()">
@@ -779,48 +821,8 @@
                                 </span>
                                 <span class="btn-text">Previous</span>
                             </button>
-                            <button class="send-btn" type="button" onclick="sendOtp()" id="sendBtn" disabled>
+                            <button class="send-btn" type="submit" id="submitBtn" disabled>
                                 <span class="btn-text">Send</span>
-                                <span class="btn-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                    </svg>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 9: OTP -->
-                    <div class="step" id="step9">
-                        <h1>Verification</h1>
-                        <!-- <p class="question">Please enter your personal details.</p> -->
-                        
-                        <div class="form-group">
-                            <label for="otp">Enter OTP</label>
-                            <input type="text" id="input_otp" class="form-control" name="otp" placeholder="______" maxlength="6" required>
-                            <small id="otp_error" style="color: red; display: none;">Invalid OTP. Please try again.</small>
-                        </div>
-
-                        <p class="otp-info">We've sent a 6-digit code to your registered phone number.</p>
-
-                        <div class="resend-container" style="margin-top: 5px;">
-                            <button type="button" id="resendOtpBtn" class="resend-btn" onclick="resendOtp()" disabled>Resend OTP</button>
-                            <span id="resendTimer">00:30</span>
-                        </div>
-                        
-                        <div class="button-group">
-                            <button class="prev-btn" type="button" onclick="prevStep()">
-                                <span class="btn-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                                        <polyline points="12 19 5 12 12 5"></polyline>
-                                    </svg>
-                                </span>
-                                <span class="btn-text">Previous</span>
-                            </button>
-                            <button class="submit-btn" type="submit" id="submitBtn" disabled>
-                                <span class="btn-text">Submit</span>
                                 <span class="btn-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -839,7 +841,7 @@
             </div>
             
             <div class="image-section">
-                <img src="https://janicez557.sg-host.com/wp-content/uploads/2024/12/shutterstock_764105278-scaled-1-3.png" alt="Residential Building">
+                <img src="https://janicez557.sg-host.com/wp/wp-content/uploads/2024/12/shutterstock_764105278-scaled-1-3.png" alt="Residential Building">
             </div>
         </div>
         
@@ -966,8 +968,12 @@
                     // alert('Lead saved and OTP sent successfully!');
                     sessionStorage.setItem('lead_id', data.lead_id);
                     sessionStorage.setItem('phone', formData.get("phone"));
-                    startResendTimer(); 
-                    nextStep();
+
+                    const otpContainer = document.getElementById("otpContainer");
+                    const getCode = document.getElementById("getCode");
+                    otpContainer.style.display = 'block';
+                    getCode.disabled = true;
+                    startResendTimer();
                 } else {
                     alert('Failed to process request: ' + data.message);
                 }
@@ -977,7 +983,7 @@
             }
         }
         
-        let resendCountdown = 30;
+        let resendCountdown = 120;
         let resendInterval;
 
         function startResendTimer() {
@@ -985,12 +991,14 @@
             const resendTimer = document.getElementById("resendTimer");
 
             resendBtn.disabled = true;
-            resendCountdown = 30;
-            resendTimer.textContent = `00:${resendCountdown}`;
+            resendCountdown = 120;
+            resendTimer.textContent = `02:00`;
 
             resendInterval = setInterval(() => {
                 resendCountdown--;
-                resendTimer.textContent = `00:${resendCountdown < 10 ? '0' + resendCountdown : resendCountdown}`;
+                const minutes = Math.floor(resendCountdown / 60);
+                const seconds = resendCountdown % 60;
+                resendTimer.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
                 if (resendCountdown <= 0) {
                     clearInterval(resendInterval);
@@ -1165,13 +1173,13 @@
 			let name = document.getElementById('input_name').value.trim();
 			let phone = document.getElementById('input_phone').value.trim();
 			let email = document.getElementById('input_email').value.trim();
-			document.getElementById('sendBtn').disabled = !(name && phone && email);
+			document.getElementById('getCode').disabled = !(name && phone && email);
 		}
 		
 		function validatePhone() {
 			let phoneInput = document.getElementById("input_phone");
 			let errorMsg = document.getElementById("phone_error");
-			let sendBtn = document.getElementById("sendBtn");
+			let getCode = document.getElementById("getCode");
 
 			phoneInput.value = phoneInput.value.replace(/\D/g, '');
 			
@@ -1179,27 +1187,27 @@
 			
 			if (!phonePattern.test(phoneInput.value)) {
 				errorMsg.style.display = "block";
-				sendBtn.disabled = true;
+				getCode.disabled = true;
 			} else {
 				errorMsg.style.display = "none";
-				sendBtn.disabled = false;
+				getCode.disabled = false;
 			}
 		}
 
 		function validateEmail() {
 			let emailInput = document.getElementById("input_email");
 			let errorMsg = document.getElementById("email_error");
-			let sendBtn = document.getElementById("sendBtn");
+			let getCode = document.getElementById("getCode");
 	
 			// Email validation pattern
 			let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 	
 			if (!emailPattern.test(emailInput.value)) {
 				errorMsg.style.display = "block";
-				sendBtn.disabled = true;
+				getCode.disabled = true;
 			} else {
 				errorMsg.style.display = "none";
-				sendBtn.disabled = false;
+				getCode.disabled = false;
 			}
 		}
 
