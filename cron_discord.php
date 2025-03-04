@@ -11,10 +11,10 @@ $user = 'root';
 $pass = 'root';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE verified_at IS NOT NULL AND discord_sent != 1 LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE verified_at IS NOT NULL AND send_discord IS NULL LIMIT 1");
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -22,7 +22,7 @@ try {
         $userId = $user['id'];
 
         if (sendLeadToDiscord($user)) {
-            $updateStmt = $pdo->prepare("UPDATE users SET discord_sent = 1 WHERE id = :id");
+            $updateStmt = $pdo->prepare("UPDATE users SET send_discord = 1 WHERE id = :id");
             $updateStmt->execute(['id' => $userId]);
 
             echo "Lead $userId has been sent.\n";
