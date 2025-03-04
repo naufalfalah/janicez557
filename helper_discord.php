@@ -1,5 +1,142 @@
 <?php
 
+// Function to send data via cURL
+function sendData($data)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'http://janicez87.sg-host.com/endpoint.php',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authorization: Basic am9tZWpvdXJuZXl3ZWJzaXRlQGdtYWlsLmNvbTpQQCQkd29yZDA5MDIxOGxlYWRzISM='
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    return $response;
+}
+
+// Function to fetch user's IP address
+function fetchIp()
+{
+    $url = "https://api.ipify.org/?format=json";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        return false;
+    }
+
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    if ($data !== null) {
+        return $data['ip'];
+    } else {
+        return false;
+    }
+}
+
+// Function to check for junk content
+function checkJunk($data)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://jomejourney.cognitiveservices.azure.com/contentmoderator/moderate/v1.0/ProcessText/Screen',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: text/plain',
+            'Ocp-Apim-Subscription-Key: 453fe3c404554800bc2c22d7ef681542'
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    return json_decode($response, true);
+}
+
+function sendDiscordMsg($data)
+{
+    $post_array = array(
+        "content" => $data,
+        "embeds" => null,
+        "attachments" => []
+    );
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+
+        CURLOPT_URL => 'https://discord.com/api/webhooks/1343431986500468776/w-BlxCZetuhrjsIPWbHCs9qPCUUV04nT3AsQCL9VCrFt4_LdmbPV7JrVke_xmAeYmCwQ',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode($post_array),
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Cookie: __dcfduid=8ec71370974011ed9aeb96cee56fe4d4; __sdcfduid=8ec71370974011ed9aeb96cee56fe4d49deabe12bc0fc3d686d23eaa0b49af957ffe68eadec722cff5170d5c750b00ea'
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    return $response;
+}
+
+// Function to send frequency lead
+function sendFrequencyLead($data)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://roundrobin.datapoco.ai/api/lead_frequency/add_lead',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authorization: Basic ' . base64_encode('Client Management Portal:123456')
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    return $response;
+}
+
 function sendLeadToDiscord($user)
 {
     // echo json_encode($_POST); 
@@ -16,124 +153,39 @@ function sendLeadToDiscord($user)
             "name" => $user['name'],
             "mobile_number" => $user['phone'],
             "email" => $user['email'],
-            "source_url" => 'https://findmypropertyvalaution.homes/',
+            "source_url" => 'https://launchgovtest.homes/',
         );
 
-        if (isset($_POST['form_type']) && $_POST['form_type'] == 'condo') {
-
-            $data = 'New Lead Please take note! New Lead Please take note! 
-    Jome Official, you have a new lead:
-    - Source Url: https://findmypropertyvalaution.homes/
-    - Name: '.$_POST['firstname'].'
-    - Contact:  https://wa.me/+65'.$_POST['ph_number'].'
-    - Email: '.$_POST['email'].'
-    - Project: '.$_POST['condo_project_name'].'
-    - Blk:  '.$_POST['blk'].'
-    - Looking to sell your property: '.$_POST['sellCheck'].'
-    - Floor - Unit number: '.$_POST['floorNumber'] ." - ". $_POST['unitNumber'].'';
-
-
-            $additional_data = array(
-                array(
-                    "key" => "Project",
-                    "value" => "Condo " . $_POST['condo_project_name']
-                ),
-                array(
-                    "key" => "Blk",
-                    "value" => $_POST['blk']
-                ),
-                array(
-                    "key" => "Looking to sell your property",
-                    "value" => $_POST['sellCheck']
-                ),
-                array(
-                    "key" => "Floor - Unit number",
-                    "value" => $_POST['floorNumber'] ." - ". $_POST['unitNumber']
-                )
-            );
-        } elseif (isset($_POST['form_type']) && $_POST['form_type'] == 'landed') {
-
-            $data = 'New Lead Please take note! New Lead Please take note! 
-    Jome Official, you have a new lead:
-    - Source Url: https://findmypropertyvalaution.homes/
-    - Name: '.$_POST['firstname'].'
-    - Contact:  https://wa.me/+65'.$_POST['ph_number'].'
-    - Email: '.$_POST['email'].'
-    - Project: Landed
-    - Landed Street:  '.$_POST['landed_street'].'
-    - SQFT: '.$_POST['sqft'].'
-    - Like to Know: '.implode(" | ", $_POST['like_to_know']).'
-    - Plans: '.$_POST['your_plans'].'';
-
-            $additional_data = array(
-                array(
-                    "key" => "Project",
-                    "value" => "Landed"
-                ),
-                array(
-                    "key" => "Landed Street",
-                    "value" => $_POST['landed_street']
-                ),
-                array(
-                    "key" => "SQFT",
-                    "value" => $_POST['sqft']
-                ),
-                array(
-                    "key" => "Like to Know",
-                    "value" => implode(" | ", $_POST['like_to_know'])
-                ),
-                array(
-                    "key" => "Plans",
-                    "value" => $_POST['your_plans']
-                )
-            );
-        } elseif (isset($_POST['form_type']) && $_POST['form_type'] == 'hdb') {
-
-            $data = 'New Lead Please take note! New Lead Please take note! 
-    Jome Official, you have a new lead:
-    - Source Url: https://findmypropertyvalaution.homes/
-    - Name: '.$_POST['firstname'].'
-    - Contact:  https://wa.me/+65'.$_POST['ph_number'].'
-    - Email: '.$_POST['email'].'
-    - Project: HDB
-    - Town:  '.$_POST['town'].'
-    - Street Name: '.$_POST['street_name'].'
-    - Blk: '.$_POST['blk'].'
-    - HDB Flat Type: '.$_POST['flat_type'].'
-    - Looking to sell your property: '.$_POST['sellCheck'].'
-    - Floor - Unit number: '.$_POST['floor_number'] ." - ".$_POST['unit_number'].'';
-
-            $additional_data = array(
-                array(
-                    "key" => "Project",
-                    "value" => "HDB"
-                ),
-                array(
-                    "key" => "Town",
-                    "value" => $_POST['town']
-                ),
-                array(
-                    "key" => "Street Name",
-                    "value" => $_POST['street_name']
-                ),
-                array(
-                    "key" => "Blk",
-                    "value" => $_POST['blk']
-                ),
-                array(
-                    "key" => "HDB Flat Type",
-                    "value" => $_POST['flat_type']
-                ),
-                array(
-                    "key" => "Looking to sell your property",
-                    "value" => $_POST['sellCheck']
-                ),
-                array(
-                    "key" => "Floor - Unit number",
-                    "value" => $_POST['floor_number'] ." - ".$_POST['unit_number']
-                )
-            );
-        }
+        $additional_data = array(
+            array(
+                "key" => "Who will be included in your EC purchase?",
+                "value" => $user['household']
+            ),
+            array(
+                "key" => "Does your household include a Singapore Citizen?",
+                "value" => $user['citizenship']
+            ),
+            array(
+                "key" => "Are you and/or your co-applicants of eligible age?",
+                "value" => $user['requirement']
+            ),
+            array(
+                "key" => "Is your combined household income below $16,000?",
+                "value" => $user['household_income']
+            ),
+            array(
+                "key" => "Do you or any co-applicants currently own an HDB flat that has completed the Minimum Occupation Period (MOP)?",
+                "value" => $user['ownership_status']
+            ),
+            array(
+                "key" => "Have you or any co-applicants owned or disposed of any private property in the past 30 months?",
+                "value" => $user['private_property_ownership']
+            ),
+            array(
+                "key" => "Is this your first application for an HDB/EC property?",
+                "value" => $user['first_time_applicant']
+            ),
+       );
 
         $commonData['additional_data'] = $additional_data;
         $LeadManagement = $commonData;
@@ -164,7 +216,7 @@ function sendLeadToDiscord($user)
             $webhook_data['is_send_discord'] = 1;
             // Assuming sendFrequencyLead() is defined elsewhere
             sendFrequencyLead($LeadManagement);
-            //sendDiscordMsg($data);
+            sendDiscordMsg($webhook_data);
             $_SESSION['lead_sent'] = true;
         }
 
@@ -173,139 +225,7 @@ function sendLeadToDiscord($user)
 
         // Send data to the endpoint
         sendData($webhook_data);
-    }
-
-    // Function to send data via cURL
-    function sendData($data)
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://janicez87.sg-host.com/endpoint.php',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Authorization: Basic am9tZWpvdXJuZXl3ZWJzaXRlQGdtYWlsLmNvbTpQQCQkd29yZDA5MDIxOGxlYWRzISM='
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-    }
-
-    // Function to fetch user's IP address
-    function fetchIp()
-    {
-        $url = "https://api.ipify.org/?format=json";
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            return false;
-        }
-
-        curl_close($ch);
-
-        $data = json_decode($response, true);
-
-        if ($data !== null) {
-            return $data['ip'];
-        } else {
-            return false;
-        }
-    }
-
-    // Function to check for junk content
-    function checkJunk($data)
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://jomejourney.cognitiveservices.azure.com/contentmoderator/moderate/v1.0/ProcessText/Screen',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: text/plain',
-                'Ocp-Apim-Subscription-Key: 453fe3c404554800bc2c22d7ef681542'
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        return json_decode($response, true);
-    }
-
-    function sendDiscordMsg($data)
-    {
-        $post_array = array(
-            "content" => $data,
-            "embeds" => null,
-            "attachments" => []
-        );
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-
-            CURLOPT_URL => 'https://discord.com/api/webhooks/1337719676704133140/xYQPjnOeeEwNb1V6xmf6Gz3Y9m-AIfq-8Iqet61Y_FvQPukqOwGB1vbFJXxk9X7pnrg_',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($post_array),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Cookie: __dcfduid=8ec71370974011ed9aeb96cee56fe4d4; __sdcfduid=8ec71370974011ed9aeb96cee56fe4d49deabe12bc0fc3d686d23eaa0b49af957ffe68eadec722cff5170d5c750b00ea'
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        echo $response;
-    }
-
-    // Function to send frequency lead
-    function sendFrequencyLead($data)
-    {
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://roundrobin.datapoco.ai/api/lead_frequency/add_lead',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Authorization: Basic ' . base64_encode('Client Management Portal:123456')
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        curl_close($curl);
+        return true;
     }
 }
 
