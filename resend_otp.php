@@ -39,6 +39,9 @@ try {
         exit();
     }
 
+    $message = "Your OTP code is: $otp";
+    $sendResult = sendWpMessage($phone, $message);
+
     error_log("New OTP for $phone: $otp");
 
     echo json_encode(['success' => true, 'message' => 'OTP resent successfully']);
