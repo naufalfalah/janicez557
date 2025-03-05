@@ -1,23 +1,8 @@
 <?php
 
+require_once 'database.php';
 require_once 'helper_2chat.php';
 require_once 'lead_filter.php';
-
-$host = 'localhost';
-// $dbname = 'dbhnskgiz5vgt0';
-// $user = 'ueglrxglswpkr';
-// $pass = '|$jicqbd23h#';
-$dbname = 'dbiqzpqa1fx0dl';
-$user = 'root';
-$pass = 'root';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);

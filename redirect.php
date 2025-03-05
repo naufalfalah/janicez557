@@ -1,8 +1,10 @@
 <?php
 
+loadEnv(__DIR__ . '/.env');
+
 function safe_redirect($url) {
     if (!headers_sent()) {
-        header("Location: https://janicez557.sg-host.com/" . $url);
+        header("Location: " . getenv('BASE_URL') . $url);
         exit;
     } else {
         die("Cannot redirect, headers already sent.");

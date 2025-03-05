@@ -1,20 +1,6 @@
 <?php
 
-$host = 'localhost';
-// $dbname = 'dbhnskgiz5vgt0';
-// $user = 'ueglrxglswpkr';
-// $pass = '|$jicqbd23h#';
-$dbname = 'dbiqzpqa1fx0dl';
-$user = 'root';
-$pass = 'root';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
-    exit();
-}
+require_once 'database.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
