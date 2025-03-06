@@ -1,5 +1,7 @@
 <?php
 
+require_once 'config.php';
+
 loadEnv(__DIR__ . '/.env');
 
 function safe_redirect($url) {
@@ -12,7 +14,7 @@ function safe_redirect($url) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    safe_redirect("registration/");
+    safe_redirect("registration.html");
     exit;
 }
 
@@ -39,7 +41,7 @@ switch (true) {
         safe_redirect("appeal.html");
         exit;
     default:
-        safe_redirect("/");
+        safe_redirect("");
         exit;
 }
 
