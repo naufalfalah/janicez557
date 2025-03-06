@@ -944,45 +944,9 @@
                 updateProgressBar();
             }
         }
-
-        async function sendOtp() {
-            const form = document.getElementById("registrationForm");
-            const formData = new FormData(form);
-
-            // formData.forEach((value, key) => {
-            //     console.log(`${key}: ${value}`);
-            // });
-            const urlEncodedData = new URLSearchParams(formData).toString();
-            try {
-                const response = await fetch('save_lead_and_otp.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: urlEncodedData
-                });
-                console.log('response', response);
-
-                const data = await response.json();
-                if (data.success) {
-                    // alert('Lead saved and OTP sent successfully!');
-                    sessionStorage.setItem('lead_id', data.lead_id);
-                    sessionStorage.setItem('phone', formData.get("phone"));
-
-                    const otpContainer = document.getElementById("otpContainer");
-                    const getCode = document.getElementById("getCode");
-                    otpContainer.style.display = 'block';
-                    getCode.disabled = true;
-                    startResendTimer();
-                } else {
-                    alert('Failed to process request: ' + data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while processing the request.');
-            }
-        }
         
+        let isSendingOtp = false;
+        let isResendingOtp = false;
         let resendCountdown = 120;
         let resendInterval;
 
@@ -1008,7 +972,52 @@
             }, 1000);
         }
 
+        async function sendOtp() {
+            if (isSendingOtp) return;
+            isSendingOtp = true;
+
+            const getCode = document.getElementById("getCode");
+            getCode.disabled = true;
+            
+            const form = document.getElementById("registrationForm");
+            const formData = new FormData(form);
+            const urlEncodedData = new URLSearchParams(formData).toString();
+
+            try {
+                const response = await fetch('save_lead_and_otp.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: urlEncodedData
+                });
+                console.log('response', response);
+
+                const data = await response.json();
+                if (data.success) {
+                    // alert('Lead saved and OTP sent successfully!');
+                    sessionStorage.setItem('lead_id', data.lead_id);
+                    sessionStorage.setItem('phone', formData.get("phone"));
+
+                    const otpContainer = document.getElementById("otpContainer");
+                    otpContainer.style.display = 'block';
+                    startResendTimer();
+                } else {
+                    alert('Failed to process request: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the request.');
+            }
+        }
+
         async function resendOtp() {
+            if (isResendingOtp) return;
+            isResendingOtp = true;
+
+            const resendOtpBtn = document.getElementById("resendOtpBtn");
+            resendOtpBtn.disabled = true;
+
             const phone = sessionStorage.getItem('phone');
             if (!phone) {
                 alert("Phone number is missing!");
@@ -1035,6 +1044,8 @@
                 console.error('Error:', error);
                 alert('An error occurred while resending OTP.');
             }
+
+            isResendingOtp = false;
         }
 
         async function verifyOtp(event) {
