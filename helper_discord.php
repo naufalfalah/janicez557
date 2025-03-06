@@ -89,7 +89,7 @@ function sendDiscordMsg($data)
 
     curl_setopt_array($curl, array(
 
-        CURLOPT_URL => 'https://discord.com/api/webhooks/1343431986500468776/w-BlxCZetuhrjsIPWbHCs9qPCUUV04nT3AsQCL9VCrFt4_LdmbPV7JrVke_xmAeYmCwQ',
+        CURLOPT_URL => 'https://discord.com/api/webhooks/1337719676704133140/xYQPjnOeeEwNb1V6xmf6Gz3Y9m-AIfq-8Iqet61Y_FvQPukqOwGB1vbFJXxk9X7pnrg_',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
