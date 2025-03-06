@@ -3,7 +3,7 @@
 require_once 'database.php';
 require_once 'helper_discord.php';
 
-$stmt = $pdo->prepare("SELECT * FROM users WHERE verified_at IS NOT NULL AND send_discord IS NULL LIMIT 1");
+$stmt = $pdo->prepare("SELECT * FROM users WHERE verified_at IS NULL AND send_discord IS NULL LIMIT 1");
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

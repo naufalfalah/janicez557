@@ -1,6 +1,7 @@
 <?php
 
 require_once 'database.php';
+require_once 'helper_discord.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
@@ -37,6 +38,16 @@ try {
     $updateStmt->execute();
 
     $pdo->commit();
+    
+    $fetchStmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+    $fetchStmt->execute([':id' => $lead_id]);
+    $user = $fetchStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        sendLeadToDiscord($user);
+    } else {
+        die("Error: User not found after insert");
+    }
 
     echo json_encode(['success' => true, 'message' => 'OTP verified, user updated']);
     exit();
