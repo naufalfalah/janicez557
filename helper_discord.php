@@ -1,5 +1,9 @@
 <?php
 
+require_once 'config.php';
+
+loadEnv(__DIR__ . '/.env');
+
 // Function to send data via cURL
 function sendData($data)
 {
@@ -88,8 +92,7 @@ function sendDiscordMsg($data)
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-
-        CURLOPT_URL => 'https://discord.com/api/webhooks/1337719676704133140/xYQPjnOeeEwNb1V6xmf6Gz3Y9m-AIfq-8Iqet61Y_FvQPukqOwGB1vbFJXxk9X7pnrg_',
+        CURLOPT_URL => getenv('DISCORD_WEBHOOK_URL'),
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -153,7 +156,7 @@ function sendLeadToDiscord($user)
             "name" => $user['name'],
             "mobile_number" => $user['phone'],
             "email" => $user['email'],
-            "source_url" => 'https://launchgovtest.homes/',
+            "source_url" => getenv('DISCROD_SOURCE_URL'),
         );
 
         $additional_data = array(

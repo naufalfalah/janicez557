@@ -1,5 +1,9 @@
 <?php
 
+require_once 'config.php';
+
+loadEnv(__DIR__ . '/.env');
+
 function sendWpMessage($client_number, $message)
 {
     if (empty($client_number) || empty($message)) {
@@ -7,8 +11,8 @@ function sendWpMessage($client_number, $message)
     }
 
     $curl = curl_init();
-    $api_key = "UAK32c243e8-e2ca-417a-ba7a-b3e1ee7b3d4c";
-    $from_number = "+6580832500";
+    $api_key = getenv('2CHAT_API_KEY');
+    $from_number = getenv('2CHAT_FROM_NUMBER');
 
     curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://api.p.2chat.io/open/whatsapp/send-message',
