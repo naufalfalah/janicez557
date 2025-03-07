@@ -784,9 +784,13 @@
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <div class="input-container">
-                                <input type="tel" id="input_phone" class="form-control" data-id="phone" name="phone" placeholder="+65" maxlength="8" oninput="validatePhone()" required>
-                                <button id="getCode" onclick="sendOtp()" disabled>Get Code</button>
+                            <div class="input-container" style="display: flex; align-items: center;">
+                                <div style="display: flex; align-items: center; border: 1px solid #ccc; padding: 6px; border-radius: 5px; background: #f8f9fa; color: rgba(15, 23, 42, 0.5);">
+                                    <img src="https://flagcdn.com/w40/sg.png" alt="SG Flag" width="24" height="16" style="margin-right: 5px;">
+                                    <span style="font-weight: bold;">+65</span>
+                                </div>
+                                <input type="tel" id="input_phone" class="form-control" data-id="phone" name="phone" placeholder="Enter your phone number" maxlength="8" oninput="validatePhone()" required style="flex: 1; margin-left: 5px;">
+                                <button type="button" id="getCode" onclick="sendOtp()" disabled style="margin-left: 10px;">Get Code</button>
                             </div>
                             <small id="phone_error" style="color: red; display: none;">Phone number should start with 9 or 8 and must be 8 digits long.</small>
                         </div>
@@ -821,7 +825,7 @@
                                 </span>
                                 <span class="btn-text">Previous</span>
                             </button>
-                            <button class="send-btn" type="submit" id="submitBtn" disabled>
+                            <button class="send-btn" type="button" id="submitBtn" onclick="sendOtp()" disabled>
                                 <span class="btn-text">Send</span>
                                 <span class="btn-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -978,6 +982,11 @@
 
             const getCode = document.getElementById("getCode");
             getCode.disabled = true;
+
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.setAttribute("type", "submit");
+            submitBtn.removeAttribute("onclick");
+            submitBtn.disabled = true;
             
             const form = document.getElementById("registrationForm");
             const formData = new FormData(form);
@@ -998,6 +1007,7 @@
                     // alert('Lead saved and OTP sent successfully!');
                     sessionStorage.setItem('lead_id', data.lead_id);
                     sessionStorage.setItem('phone', formData.get("phone"));
+
 
                     const otpContainer = document.getElementById("otpContainer");
                     otpContainer.style.display = 'block';
@@ -1185,12 +1195,14 @@
 			let phone = document.getElementById('input_phone').value.trim();
 			let email = document.getElementById('input_email').value.trim();
 			document.getElementById('getCode').disabled = !(name && phone && email);
+			document.getElementById('submitBtn').disabled = !(name && phone && email);
 		}
 		
 		function validatePhone() {
 			let phoneInput = document.getElementById("input_phone");
 			let errorMsg = document.getElementById("phone_error");
 			let getCode = document.getElementById("getCode");
+			let submitBtn = document.getElementById("submitBtn");
 
 			phoneInput.value = phoneInput.value.replace(/\D/g, '');
 			
@@ -1199,9 +1211,11 @@
 			if (!phonePattern.test(phoneInput.value)) {
 				errorMsg.style.display = "block";
 				getCode.disabled = true;
+				submitBtn.disabled = true;
 			} else {
 				errorMsg.style.display = "none";
 				getCode.disabled = false;
+				submitBtn.disabled = false;
 			}
 		}
 
@@ -1209,6 +1223,7 @@
 			let emailInput = document.getElementById("input_email");
 			let errorMsg = document.getElementById("email_error");
 			let getCode = document.getElementById("getCode");
+			let submitBtn = document.getElementById("submitBtn");
 	
 			// Email validation pattern
 			let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -1216,9 +1231,11 @@
 			if (!emailPattern.test(emailInput.value)) {
 				errorMsg.style.display = "block";
 				getCode.disabled = true;
+				submitBtn.disabled = true;
 			} else {
 				errorMsg.style.display = "none";
 				getCode.disabled = false;
+				submitBtn.disabled = false;
 			}
 		}
 
